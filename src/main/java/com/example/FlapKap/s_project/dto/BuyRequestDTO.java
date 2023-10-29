@@ -6,7 +6,6 @@ import lombok.Data;
 @Data
 @Builder
 public class BuyRequestDTO {
-    private String username;
     private int productId;
     private int amount;
 }

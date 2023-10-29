@@ -1,6 +1,7 @@
 package com.example.FlapKap.s_project.service.impl;
 
 import com.example.FlapKap.s_project.dto.BuyResponseDto;
+import com.example.FlapKap.s_project.exceptions.BadRequestException;
 import com.example.FlapKap.s_project.exceptions.ProductNotFoundException;
 import com.example.FlapKap.s_project.exceptions.SellerNotFoundException;
 import com.example.FlapKap.s_project.model.Product;
@@ -27,18 +28,15 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public String getByName(String name) {
-        if (productRepo.existsByProductName(name)){
-           throw new ProductNotFoundException("! Sorry this product is not available now, check us soon ");
-        }
-        Product product=productRepo.findByProductName(name);
+        Product product=productRepo.findByProductName(name)
+                .orElseThrow(()->new ProductNotFoundException("! Sorry this product is not available now, check us soon "));
         return "available amount of"+product.getAmount()+" ";
     }
 
     @Override
     public Product addProduct(Product product,String name) {
-        if (sellerRepo.existsByName(name)) {
-            throw new SellerNotFoundException("there is no seller with this name");}
-        Seller seller=sellerRepo.findByName(name);
+        if (productRepo.existsByProductName(product.getProductName())) throw new BadRequestException("product is already exist");
+        Seller seller=sellerRepo.findByName(name).orElseThrow(()->new SellerNotFoundException("there is no seller with this name"));
         product.setSeller(seller);
         return productRepo.save(product);
 
@@ -57,20 +55,18 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public String deleteProduct(String productName) {
-        if (!productRepo.existsByProductName(productName)){
-            throw new ProductNotFoundException("this product is already deleted ");
-        }
-        Product product=productRepo.findByProductName(productName);
+        Product product=productRepo.findByProductName(productName)
+                .orElseThrow(()->new ProductNotFoundException("this product is already deleted "));
         productRepo.delete(product);
         return "product "+productName+" deleted successfully ";
     }
 
     @Override
-    public BuyResponseDto buy(double deposit, int productId, Integer amountToBuy){
+    public BuyResponseDto buy(double deposit, int productId, Integer amountToBuy) throws BadRequestException {
        Product product=productRepo.findById(productId)
                .orElseThrow(()->new ProductNotFoundException("product name is not correct "));
-       if (product.getAmount()<amountToBuy) throw new RuntimeException("available amount is not enough ");
-       else if (!(deposit<(product.getCoast()*amountToBuy)))throw new RuntimeException("money is not enough");
+       if (product.getAmount()<amountToBuy) {throw new BadRequestException("available amount is not enough");}
+       else if (!(deposit>(product.getCoast()*amountToBuy))){throw new BadRequestException("money is not enough");}
        int newAmount=product.getAmount()-amountToBuy;
        product.setAmount(newAmount);
        productRepo.save(product);

@@ -22,8 +22,8 @@ public class UserController {
         return new ResponseEntity<>(userService.addDeposit(request,deposit), HttpStatus.OK);
     }
     @PostMapping("/buy")
-    public ResponseEntity<BuyResponseDto> buy(@RequestBody BuyRequestDTO req){
-        return new ResponseEntity<>(userService.buy(req),HttpStatus.OK);
+    public ResponseEntity<BuyResponseDto> buy(@NonNull HttpServletRequest hRequest,@RequestBody BuyRequestDTO req){
+        return new ResponseEntity<>(userService.buy(hRequest,req),HttpStatus.OK);
     }
 
     @PostMapping("/reset/{id}")

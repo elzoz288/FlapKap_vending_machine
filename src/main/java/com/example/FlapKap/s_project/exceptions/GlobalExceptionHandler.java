@@ -27,4 +27,12 @@ public class GlobalExceptionHandler {
         errorObject.setTimeStamp(new Date());
         return new ResponseEntity<>(errorObject,HttpStatus.NOT_FOUND);
     }
+    @ExceptionHandler(SellerNotFoundException.class)
+    public ResponseEntity<ErrorBody> handleBadRequestException(BadRequestException ex, WebRequest request ){
+        ErrorBody errorObject = new ErrorBody();
+        errorObject.setStatusCode(HttpStatus.BAD_REQUEST.value());
+        errorObject.setMessage(ex.getMessage());
+        errorObject.setTimeStamp(new Date());
+        return new ResponseEntity<>(errorObject,HttpStatus.BAD_REQUEST);
+    }
 }

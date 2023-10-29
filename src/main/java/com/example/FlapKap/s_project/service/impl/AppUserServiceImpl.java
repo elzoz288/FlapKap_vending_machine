@@ -4,6 +4,7 @@ import com.example.FlapKap.s_project.config.security.JwtService;
 import com.example.FlapKap.s_project.dto.BuyRequestDTO;
 import com.example.FlapKap.s_project.dto.BuyResponseDto;
 import com.example.FlapKap.s_project.dto.DepositRequestDto;
+import com.example.FlapKap.s_project.exceptions.BadRequestException;
 import com.example.FlapKap.s_project.model.AppUser;
 import com.example.FlapKap.s_project.repository.AppUserRepository;
 import com.example.FlapKap.s_project.service.AppUserService;
@@ -12,6 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Service
 @RequiredArgsConstructor
@@ -20,7 +22,7 @@ public class AppUserServiceImpl implements AppUserService {
     private final ProductService productSer;
     private final JwtService jwtService;
     @Override
-    public String addDeposit(@NonNull HttpServletRequest request,Double deposit) {
+    public String addDeposit(@NonNull HttpServletRequest request, Double deposit) {
         final String authHeader = request.getHeader("Authorization");
         final  String jwt = authHeader.substring(7);
         String username=jwtService.extractUsername(jwt);
@@ -32,8 +34,11 @@ public class AppUserServiceImpl implements AppUserService {
     }
 
     @Override
-    public BuyResponseDto buy( BuyRequestDTO req) {
-        Double x =userRepo.findByUserName(req.getUsername()).get().getDeposit();
+    public BuyResponseDto buy( @NonNull HttpServletRequest request,BuyRequestDTO req) {
+        final String authHeader = request.getHeader("Authorization");
+        final  String jwt = authHeader.substring(7);
+        String username=jwtService.extractUsername(jwt);
+        Double x =userRepo.findByUserName(username).get().getDeposit();
         return productSer.buy(x, req.getProductId(), req.getAmount());
     }
 

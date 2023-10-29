@@ -30,4 +30,5 @@ class SellerRepositoryTest {
         sellerRepo.save(seller);
         assertThat(sellerRepo.existsByName(seller.getName())).isEqualTo(true);
     }
+
 }

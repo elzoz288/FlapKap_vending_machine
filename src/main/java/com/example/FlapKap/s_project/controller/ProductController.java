@@ -29,7 +29,8 @@ public class ProductController {
 
     @PutMapping("/prime/add/{name}")
     public ResponseEntity<Product> addProduct(@RequestBody Product product,@PathVariable String name) {
-             return new ResponseEntity<>(productService.addProduct(product,name),HttpStatus.OK);
+             return new ResponseEntity<>(productService.addProduct(product,name)
+                     ,HttpStatus.OK);
     }
     @PutMapping("/prime/update/{id}")
     public ResponseEntity<Product> updateProduct(@RequestBody Product product,@PathVariable Integer id) {

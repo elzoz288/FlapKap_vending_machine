@@ -8,7 +8,7 @@ import java.util.List;
 public interface SellerService {
     List<Seller> getAllSeller ();
     Seller getSellerByName (String name);
-    String addSeller(SellerDto seller);
+    Seller addSeller(SellerDto seller);
     String updateSeller(SellerDto seller , int id);
 
     String deleteSeller( SellerDto sellerDto);

@@ -25,7 +25,7 @@ public class SellerController {
       return new ResponseEntity<>(sellerService.getSellerByName(name), HttpStatus.OK);
   }
 @PutMapping("/add")
-public ResponseEntity<String> addSeller(SellerDto seller){
+public ResponseEntity<Seller> addSeller(SellerDto seller){
       return new ResponseEntity<>(sellerService.addSeller(seller),HttpStatus.OK);
 }
 @PostMapping("/update/{id}")
